@@ -1,0 +1,33 @@
+
+
+   <div fxLayout="column">
+    <h2 mat-dialog-title fxFlex fxFlexAlign="center">Particle Login</h2>
+    
+    <form novalidate (ngSubmit)="login(loginForm.value)" #loginForm="ngForm">
+    <mat-dialog-content fxLayout = "column"> 
+        <mat-form-field>
+            <input matInput placeholder="Username" type ="text" name="username" ngModel>
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput placeholder="Password" type ="password" name="password" ngModel>
+        </mat-form-field>   
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayoutGap = "10px">
+        <button type="submit" mat-raised-button color='primary' >Login</button>
+        <button mat-raised-button mat-dialog-close color='accent' >Cancel</button>
+    </mat-dialog-actions>
+    </form><br><br><br>
+     
+    <form fxLayout="column" *ngIf="loginSuccess">
+        <strong>Select Device</strong>
+        <mat-form-field>
+        <mat-select placeholder = {{selectedDevice}} (selectionChange) ="onChange($event.value)"  [(ngModel)]="selectedDevice" name="device">
+            <mat-option *ngFor="let device of devices" [value]="device">
+                {{ device}}
+            </mat-option>
+        </mat-select> 
+        </mat-form-field>
+    </form>
+    
+  
+  </div>  

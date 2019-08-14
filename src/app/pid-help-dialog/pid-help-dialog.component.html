@@ -1,0 +1,39 @@
+<div fxLayout="column">
+  <h1 mat-dialog-title>Are you sure you want to exit current fermentation session?</h1>
+  <div mat-dialog-content>
+    <h3>PID Setting Usage Guide </h3>
+  
+    <p>The controller has two separate PID controllers, Main and Heat.  All control
+      is done in degrees Celsius regardless of the user preference for Celsius or Fahrenheit.  </p>
+      <p>The Main PID controls the target temperature for the chamber to maintain the beer
+      Target temperature.  </p>
+      <p>Main Kp:  Setting represents degrees to move chamber target per degree of beer error from
+      Target setting.   10 is a good starting point.  </p>
+      
+      <p>Main Ki:  Setting represents degrees to move chamber target per second per degree beer target
+      Error.  0.0005 is a good starting point. </p>
+      
+      <p>Main Kd:  Setting represents degrees to move chamber target per change in error per second.
+      0 is a good starting point disabling any derivative action.  </p>
+      
+     <p> The Heat PID controls the % output to the heating element (between 0% and 100%) when the controller is
+      in heat mode to maintain the chamber temperature target.  </p>
+      
+      <p>Heat Kp:  Setting represents % to move heat setting per degree of chamber error from
+      Target output of main PID.   30 is a good starting point.  </p>
+      
+      <p>Heat Ki:  Setting represents % to move heat setting per second per degree chamber error from
+      Target output of main PID Error.  0.0002 is a good starting point.</p>
+      
+      <p>Heat Kd:  Setting represents % to move heat setting per change in error per second.
+      0 is a good starting point disabling any derivative action.  </p>
+    
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="false" >Close</button>
+  </div>
+  </div>
+  
+  
+   
+  

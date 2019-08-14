@@ -1,0 +1,16 @@
+<div fxLayout="column">
+    <h2 mat-dialog-title fxFlex fxFlexAlign="center">Change Target Temperature</h2>
+    
+    <mat-dialog-content fxLayout = "column"> 
+        
+        <mat-form-field>
+            <input matInput type="number" [(ngModel)]="data.temperature" >
+        </mat-form-field>
+        
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayoutGap = "10px">
+        <button mat-raised-button [mat-dialog-close]="data.temperature"color='primary' >Ok</button>
+        <button mat-raised-button mat-dialog-close color='accent' >Cancel</button>
+    </mat-dialog-actions>
+   
+ </div> 

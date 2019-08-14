@@ -1,0 +1,45 @@
+<div fxLayout ="column"  fxLayoutAlign ="start stretch"  >
+    <div fxLayout = 'row' fxLayoutAlign="start start">
+      <mat-card class='temperaturecard' fxFlex="grow">
+        <mat-card-header><i class="fa fa-thermometer-half fa-2x"></i>&nbsp;&nbsp;Beer</mat-card-header>
+        <mat-card-content align="center">
+          <h2>{{ (item | async)?.beerTemp }}</h2>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class='temperaturecard' fxFlex="grow">
+        <mat-card-header><i class="fa fa-thermometer-half fa-2x"></i>&nbsp;&nbsp;Chamber</mat-card-header>
+        <mat-card-content align="center">
+          <h2>{{ (item | async)?.fridgeTemp }}</h2>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div fxLayout = 'row' fxLayoutAlign="start start">
+      <mat-card class='temperaturecard' fxFlex="grow"> 
+        <mat-card-header><i class="fa fa-clock-o fa-2x"></i>
+        </mat-card-header>
+        <mat-card-content align="left">
+          Current State:  {{ ((item | async)?.currentState) }}
+          <br><font size="1">For:  {{ ((item | async)?.stateTime ) }}</font>
+        </mat-card-content>
+        <mat-card-actions>
+          <div style = 'height:50px'></div>
+        </mat-card-actions>
+      </mat-card>
+      <mat-card class='temperaturecard' fxFlex="grow">   
+        <mat-card-header><i class="fa fa-thermometer-half fa-2x"></i>&nbsp;&nbsp;Chamber<br>&nbsp;&nbsp;Target</mat-card-header>
+        <mat-card-content align="center">
+            <div style = 'height:2px'></div>
+          <h2>{{ ((item | async)?.targetTemp ) }}</h2>
+        </mat-card-content>  
+        <mat-card-actions align="center" >
+            <button  mat-raised-button color='accent' (click)="openDialog()">&nbsp;&nbsp;Change Target</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+    
+  
+  
+  
+  </div>
+  
+

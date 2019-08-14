@@ -1,0 +1,79 @@
+<div fxLayout ="column"  fxLayoutAlign ="start start"  >
+<h3>Temperature Format Preference</h3>
+<mat-radio-group [(ngModel)]="userTempPreference" name="userTempPreference" type="string" (change)="tempChange($event)">
+    <mat-radio-button value="F" >Fahrenheit </mat-radio-button><br>
+    <mat-radio-button value="C">Celsius </mat-radio-button>
+  </mat-radio-group>
+<h2>PID Settings</h2>
+<button mat-raised-button color='primary' (click)="openDialog()">PID Help</button>
+<div class="container"
+     fxLayout
+     fxLayout.xs="column"
+     fxLayoutAlign="center"
+     fxLayoutGap="10px">
+    <form novalidate (ngSubmit)="setPIDButtonHandler(settingData.value)" #settingForm="ngForm" *ngIf ="settingData">
+      <mat-form-field >
+        <label>Main Kp: </label>
+        <input matInput  required name="Kp" type="number" [(ngModel)]="settingData.Kp">
+      </mat-form-field>
+      <mat-form-field >
+        <label >Main Ki:</label>
+        <input matInput  required name="Ki" type="number" [(ngModel)]="settingData.Ki">
+      </mat-form-field>
+      <mat-form-field >
+        <label>Main Kd:</label>
+        <input matInput  required name="Kd" type="number" [(ngModel)]="settingData.Kd">
+      </mat-form-field>
+      <mat-form-field >
+        <label>Heat Kp:</label>
+        <input matInput  required name="hKp" type="number" [(ngModel)]="settingData.hKp">
+      </mat-form-field>
+      <mat-form-field >
+        <label>Heat Ki:</label>
+        <input matInput  required name="hKi" type="number" [(ngModel)]="settingData.hKi">
+      </mat-form-field>
+      <mat-form-field >
+        <label>Heat Kd:</label>
+        <input matInput  required name="hKd" type="number" [(ngModel)]="settingData.hKd">
+      </mat-form-field>
+      <br>
+      <button type="submit" mat-raised-button color='primary' >Submit PID Changes</button>
+    </form>
+</div>
+<h2>PID Tuning Control</h2>
+<div class="container"
+    fxLayout
+    fxLayout.xs="column"
+    fxLayoutAlign="start"
+    fxLayoutGap="10px">
+    
+    
+    <form  novalidate (ngSubmit)="ManualPIDButtonHandler(settingData.value)" #manualPIDForm="ngForm" *ngIf ="settingData">
+      <h4>Main PID Mode</h4>
+      <mat-radio-group [(ngModel)]="settingData.mainMode" name="mainMode" type="number">
+        <mat-radio-button value="1" >Automatic</mat-radio-button><br>
+        <mat-radio-button value="0">Manual</mat-radio-button>
+      </mat-radio-group>
+      <br>
+      <mat-form-field >
+        <label>Main Output: </label>
+        <input matInput required name="output" type="number" [(ngModel)]="settingData.output">
+      </mat-form-field>
+      <h4>Heat PID Mode</h4>
+
+      <mat-radio-group [(ngModel)]="settingData.heatMode" name="heatMode" >
+        <mat-radio-button value="1" >Automatic</mat-radio-button><br>
+        <mat-radio-button value="0">Manual</mat-radio-button>
+      </mat-radio-group><br>
+
+      <mat-form-field >
+        <label>Heat Output: </label>
+        <input matInput required name="hOutput"  [(ngModel)]="settingData.hOutput">
+      </mat-form-field>
+      <br>
+      <button type="submit" mat-raised-button color='primary' >Submit</button>
+  </form>
+
+</div>
+</div>
+

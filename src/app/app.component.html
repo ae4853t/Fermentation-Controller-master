@@ -1,0 +1,42 @@
+
+<!--<div  fxLayout="column" fxLayoutAlign="stretch start">  <!-- style="position:absolute;top:0;left:0;right:0;bottom:0;"  -->
+  <mat-toolbar style="min-height:64px;" color="primary"  >
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <div fxFlex="1 1 auto"></div>
+      <span><i class="fa fa-beer"></i> Fermentation Controller</span>
+  </mat-toolbar>
+
+  <mat-sidenav-container #sidenav style="height:100%;width:100%;">  <!--style="height:100%;width:100%;"-->
+      <mat-sidenav #sidenav mode="push" opened="false" style="min-width:220px;">
+         <div fxLayout="column" fxLayoutAlign="start start" fxLayoutGap="10px">
+          <button mat-button (click)="openDialog(); sidenav.toggle();">
+            <mat-icon>account_box</mat-icon>
+            <span>Login       </span>
+          </button>
+          <button mat-button routerLink="/main" (click)="sidenav.toggle()">
+            <mat-icon>home</mat-icon>
+            <span>Main</span>
+          </button>
+          <button mat-button routerLink="/setup" (click)="sidenav.toggle()">
+            <mat-icon>settings</mat-icon>
+            <span>Setup</span>
+          </button>
+          <button mat-button routerLink="/app-history-chart" (click)="sidenav.toggle()">
+            <mat-icon>show_chart</mat-icon>
+            <span>Chart</span>
+          </button>
+          <button mat-button (click)="sidenav.toggle()">
+            <mat-icon>cancel</mat-icon>
+            <span>Close</span>
+          </button>
+        </div>
+      </mat-sidenav>
+
+
+      <div class ='details-container'>
+        <router-outlet ></router-outlet>
+      </div>
+
+    </mat-sidenav-container>

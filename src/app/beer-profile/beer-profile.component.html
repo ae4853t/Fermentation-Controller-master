@@ -1,0 +1,145 @@
+<div *ngIf="!profileRunning" fxLayout="column" fxLayoutAlign="start start" fxLayoutWrap.gt-xs>
+  <div fxLayout="row" fxLayoutAlign="start start">
+    <form novalidate #f="ngForm" (ngSubmit)="createNewProfile(f.value.profile)">
+      <mat-form-field>
+        <input matInput placeholder="Enter New Profile Name" name="profile" ngModel>
+      </mat-form-field>
+      <button mat-raised-button color='primary' type="submit">Create Profile</button>
+    </form>
+  </div>
+  <div fxLayout="row" fxLayoutAlign="start start">
+    <mat-form-field>
+      <mat-select placeholder="Select Profile" [(ngModel)]="currentProfile" (selectionChange)="profileChange($event.value)">
+        <mat-option *ngFor="let profile of profilelist" [value]="profile.key">
+          {{ profile.key}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div fxLayout="column" fxLayoutAlign="start start">
+      <button class='button' mat-raised-button color='primary' (click)="startProfile()">Start Profile&nbsp;&nbsp;&nbsp;</button>
+      <button class='button' mat-raised-button color='accent' (click)="deleteProfile()">Delete Profile</button>
+    </div>
+    <br>
+    <br>
+
+  </div>
+  <br>
+  <div class="example-container mat-elevation-z8">
+    <mat-table #table [dataSource]="dataSource">
+
+      <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+
+      <!-- Kay Column Hidden -->
+      <ng-container matColumnDef="key">
+        <mat-header-cell *matHeaderCellDef> Key </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.key}} </mat-cell>
+      </ng-container>
+
+      <!-- Position Column -->
+      <ng-container matColumnDef="position">
+        <mat-header-cell *matHeaderCellDef> No. </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.position}} </mat-cell>
+      </ng-container>
+
+      <!-- Day Column -->
+      <ng-container matColumnDef="day">
+        <mat-header-cell *matHeaderCellDef> Day </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.day}} </mat-cell>
+      </ng-container>
+
+      <!-- Temperature Column -->
+      <ng-container matColumnDef="temperature">
+        <mat-header-cell *matHeaderCellDef> Temperature </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.temperature}} </mat-cell>
+      </ng-container>
+
+      <!-- Edit Row Column -->
+      <ng-container matColumnDef="edit">
+        <mat-header-cell *matHeaderCellDef> Edit </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <button mat-button color='primary' (click)="openDialogEdit(element)">
+            <i class="fa fa-pencil-square fa-2x" aria-hidden="true"></i>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Delete Row Column -->
+      <ng-container matColumnDef="delete">
+        <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <button mat-button color='primary' (click)="deleteRow(element)">
+            <i class="fa fa-trash fa-2x" aria-hidden="true"></i>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    <button mat-raised-button color='primary' (click)="openDialogAdd()">Add Row</button>
+  </div>
+  <br>
+</div>
+
+<div *ngIf="profileRunning" fxLayout="row" fxLayoutAlign="start start">
+<mat-card class='temperaturecard' fxFlex="grow">
+  <mat-card-content align="center">
+    Running Profile: {{ (item | async)?.profileName }}
+  </mat-card-content>
+</mat-card>
+</div>
+<app-profile-chart class='googleChart' [currentProfile]="currentProfile"></app-profile-chart>
+
+
+
+  <div *ngIf="profileRunning" fxLayout="column" fxLayoutAlign="start stretch">
+    <div fxLayout='row' fxLayoutAlign="start start">
+      <mat-card class='temperaturecard' fxFlex="grow">
+        <mat-card-header>
+          <i class="fa fa-thermometer-half fa-2x"></i>&nbsp;&nbsp;Beer</mat-card-header>
+        <mat-card-content align="center">
+          <h2>{{ (item | async)?.beerTemp }}</h2>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class='temperaturecard' fxFlex="grow">
+        <mat-card-header>
+          <i class="fa fa-thermometer-half fa-2x"></i>&nbsp;&nbsp;Chamber</mat-card-header>
+        <mat-card-content align="center">
+          <h2>{{ (item | async)?.fridgeTemp }}</h2>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div fxLayout='row' fxLayoutAlign="start start">
+      <mat-card class='temperaturecard' fxFlex="grow">
+        <mat-card-header>
+          <i class="fa fa-thermometer-half fa-2x"></i>&nbsp;&nbsp;Beer
+          <br>&nbsp;&nbsp;Target</mat-card-header>
+        <mat-card-content align="center">
+          <div style='height:2px'></div>
+          <h2>{{ ((item | async)?.targetTemp ) }}</h2>
+        </mat-card-content>
+
+      </mat-card>
+      <mat-card class='temperaturecard' fxFlex="grow">
+        <mat-card-header>
+          <i class="fa fa-thermometer-half fa-2x"></i>&nbsp;&nbsp;Chamber
+          <br>&nbsp;&nbsp;Target</mat-card-header>
+        <mat-card-content align="center">
+          <div style='height:2px'></div>
+          <h2>{{ ((item | async)?.fridgeTarget ) }}</h2>
+        </mat-card-content>
+
+      </mat-card>
+    </div>
+    <mat-card class='temperaturecard' fxFlex="auto">
+      <mat-card-header>
+        <i class="fa fa-clock-o fa-2x"></i>
+        &nbsp;&nbsp;Current State: {{ ((item | async)?.currentState) }}
+        <br>&nbsp;&nbsp;For: {{ ((item | async)?.stateTime ) }}
+      </mat-card-header>
+      <mat-card-content align="left">
+
+      </mat-card-content>
+    </mat-card>
+  </div>

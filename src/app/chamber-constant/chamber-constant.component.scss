@@ -1,0 +1,12 @@
+@import '~@angular/material/theming';
+@import '../../main-theme.scss';
+
+.temperaturecard{
+  background-color: mat-color($my-app-primary);
+  color: white;
+  margin-top: 5px;
+  margin-left:2.5px;
+  margin-right:2.5px;
+}
+//margin-bottom: 5px;
+//margin-right: 70px
