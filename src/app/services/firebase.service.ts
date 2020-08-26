@@ -3,23 +3,31 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { PhotonData } from '../models/photon.data';
+import { Bubble } from '../models/bubble';
+
 
 @Injectable()
 export class FirebaseService {
-    private _photonData: BehaviorSubject<PhotonData>;
+  private _photonData: BehaviorSubject<PhotonData>;
+  private _bubble: BehaviorSubject<Bubble>;
     private dataStore: {  // This is where we will store our data in memory
-        photonData: PhotonData
+      photonData: PhotonData;
+      bubble: Bubble;
     };
 
     private photonData: PhotonData;
+    private bubble: Bubble;
+
     private afPhoton: Observable<any>;
+    private afbubble: Observable<any>;
 
     private tempFormat: string;
 
     constructor(public af: AngularFireDatabase) {
-        this.tempFormat = localStorage.getItem('tempFormat');
-        this.dataStore = { photonData: this.photonData };
-        this._photonData = <BehaviorSubject<PhotonData>>new BehaviorSubject(this.photonData);
+      this.tempFormat = localStorage.getItem('tempFormat');
+      this.dataStore = { photonData: this.photonData, bubble: this.bubble };
+      this._photonData = <BehaviorSubject<PhotonData>>new BehaviorSubject(this.photonData);
+      this._bubble = <BehaviorSubject<Bubble>>new BehaviorSubject(this.bubble);
         this.init();
     }
 
@@ -31,6 +39,13 @@ export class FirebaseService {
             this.ConfigureData();
             setInterval(() => { this.timeUpdate(this.dataStore.photonData.stateStartTime); }, 1000, 1000);
         });
+
+      // attempt to add time to the bubble json
+      this.afbubble = this.af.object('/bubble').valueChanges();
+      this.afbubble.subscribe(res => {
+        this.dataStore.bubble = res;
+        this.ConfigureData();
+      });
     }
 
 
@@ -190,7 +205,7 @@ export class FirebaseService {
                 const bbl = [ parseFloat(ch.payload.val().bpm).toFixed(2) ]
                  })*/
 
-        return this.af.list<PhotonData>('/bubble', ref => ref.limitToLast(1000)).snapshotChanges().pipe(map(changes => {
+      return this.af.list<Bubble>('/bubble', ref => ref.limitToLast(1000)).snapshotChanges().pipe(map(changes => {
             const bRows = changes.map(ch => {
                 const bbl = [ parseFloat(ch.payload.val().bpm).toFixed(2) ]
                  })
@@ -202,32 +217,33 @@ export class FirebaseService {
     get chartbbl() {
 
         // last 1008 is to limit to 7 days of history each sample is 10 minutes.  If the list is too long performance is very bad.
-        // 8-24-2020 changed from TemperatureData to bubble:
-        return this.af.list<PhotonData>('/TemperatureData', ref => ref.limitToLast(1008)).snapshotChanges().pipe(map(changes => {
+      // 8-24-2020 changed from TemperatureData to bubble:
+      return this.af.list<Bubble>('/bubble', ref => ref.limitToLast(1008)).snapshotChanges().pipe(map(changes => {
             const rows = changes.map(ch => {
               //  console.log('chart data', ch.payload.val());
               
-                let mode = ch.payload.val().currentState;
-                if (mode === '0') mode = 'Off';
+                let sg = ch.payload.val().sg;
+              /*  if (mode === '0') mode = 'Off';
                 if (mode === '1') mode = 'Cool';
                 if (mode === '2') mode = 'Heat';
-                
+                */
               
-                const options = {
+              /*  const options = {
                     month: 'short',
                     day: 'numeric', hour: '2-digit', minute: '2-digit' 
                 }; 
-                const toolTipDate = new Date(ch.payload.val().ts).toLocaleDateString('en-US', options);
-                if (this.tempFormat === 'C') {
+                const toolTipDate = new Date(ch.payload.val().ts).toLocaleDateString('en-US', options);*/
+                /*if (this.tempFormat === 'C') {*/
                     const temp = {
-                        c: [
-                            { v: new Date(ch.payload.val().ts) },
-                            { v: parseFloat(ch.payload.val().bpm).toFixed(2) },
-                            { v: parseFloat(ch.payload.val().currentState).toFixed(0)},
-                            { v: this.customToolTipbbl(toolTipDate, parseFloat(ch.payload.val().bpm).toFixed(2), mode) }
+                      c: [
+                        { v: parseFloat(ch.payload.val().bubbles).toFixed(2) },
+                        { v: parseFloat(ch.payload.val().sg).toFixed(2) },
+                        { v: parseFloat(ch.payload.val().bpm).toFixed(0)},
+                        { v: this.customToolTipbbl(parseFloat(ch.payload.val().bubbles).toFixed(2), parseFloat(ch.payload.val().bpm).toFixed(2), sg) }
                         ]
                     };
-                    return temp;
+       //       return temp;
+              /*
                 } else {
                     const temp = {
                         c: [
@@ -238,13 +254,13 @@ export class FirebaseService {
                         ]
                     };
                     return temp;
-                    }
+                    }*/
             });
             return {
                 cols: [
-                    { id: '1', label: 'Date', type: 'date' },
-                    { id: '2', label: 'Bubble Rate', type: 'number' },
-                    {id: '3', label: 'Mode',type:'number' },
+                    { id: '1', label: 'Total Bubble count', type: 'number' },
+                    { id: '2', label: 'Spec Gravity', type: 'number' },
+                    { id: '3', label: 'Bubble Rate',type:'number' },
                     { id: '4', label: 'Tooltip', type: 'string', role: 'tooltip', p: { 'html': true } }
                 ],
                 rows: rows
@@ -263,15 +279,15 @@ export class FirebaseService {
             + mode
             + '</div>';
     }
-    customToolTipbbl(dates, temp, mode) {
-        return '<div style="padding:5px 5px 5px 5px;">'
-            + dates
+    customToolTipbbl(bubbles, bpm, sg) {
+      return '<div style="padding:5px 5px 5px 5px;">'
+        + bubbles
             + '<br>'
-            + 'Bubble Rate: '
-            + temp
+        + 'Bubble Rate: '
+        + bpm
             + '<br>'
-            + 'State: '
-            + mode
+            + 'SG: '
+            + sg
             + '</div>';
     }
 
@@ -289,7 +305,12 @@ export class FirebaseService {
     get data() {
         return this._photonData.asObservable();
     }
-
+  get currentBData() {
+    return this._bubble.asObservable();
+  }
+  get Bdata() {
+    return this._bubble.asObservable();
+  }
     timeUpdate(Time: string) {
         const currentTime = Date.now();
         let startTime = +Time;
@@ -351,6 +372,16 @@ export class FirebaseService {
             this.dataStore.photonData.fridgeTemp = (((fridgeTemp * 1.8 + 32).toFixed(1)).toString() + ' \xB0F');
             this.dataStore.photonData.chamberTarget = (((chamberTarget * 1.8 + 32).toFixed(1)).toString() + ' \xB0F');
             this.dataStore.photonData.targetTemp = (((targetTemp * 1.8 + 32).toFixed(1)).toString() + ' \xB0F');
-        }
+      }
+      const abv = parseFloat(this.dataStore.bubble.abv);
+      const batch_volume = parseFloat(this.dataStore.bubble.batch_volume);
+      const bpm = parseFloat(this.dataStore.bubble.bpm);
+      const bubbles = parseFloat(this.dataStore.bubble.bubbles);
+      const co2_volume = parseFloat(this.dataStore.bubble.co2_volume);
+      const og = parseFloat(this.dataStore.bubble.og);
+      const sg = parseFloat(this.dataStore.bubble.sg);
+      const temp = parseFloat(this.dataStore.bubble.temp);
+
+
     }
 }

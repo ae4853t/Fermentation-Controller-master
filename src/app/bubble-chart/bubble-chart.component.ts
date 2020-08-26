@@ -2,7 +2,7 @@ import { Component, OnInit, OnChanges} from '@angular/core';
 import {ViewChild} from '@angular/core';
 import {HostListener} from '@angular/core';
 import {FirebaseService} from '../services/firebase.service';
-import {PhotonData} from '../models/photon.data';
+import {Bubble} from '../models/bubble';
 import { Observable, Subscription } from 'rxjs';
 import { GoogleChartInterface } from 'ng2-google-charts/google-charts-interfaces';
 import { ChartSelectEvent } from 'ng2-google-charts';
@@ -33,15 +33,15 @@ export class BubbleChartComponent implements OnInit, OnChanges{
     cooling: any;
     off: any;
     bblCurrent: any;
-     data: any;
-     item: Observable<PhotonData>;
+  Bdata: any;
+  item: Observable<Bubble>;
      columns = [];
     series = {};
     vAxisTitle = 'temp';
     constructor(private fb: FirebaseService) {
         this.fb.chartbbl
         .subscribe(res => {
-            this.data = res;
+            this.Bdata = res;
             this.updateChart();
             this.loading = false;
         });
@@ -56,12 +56,10 @@ public bubbleChart: GoogleChartInterface = {
     chartType: 'LineChart',
     dataTable: {
       cols: [
-        {id: '1', label: 'Date', type: 'number'},
-        // {id: '2', label: 'Beer', type: 'number'},
-        {id: '2', label: 'Bubble Rate', type: 'number'},
-        {id: '3', label: 'Mode', type: 'number'}
-  
-      ],
+        {id: '1', label: 'Total Bubble Count', type: 'number'},
+        {id: '2', label: 'SG', type: 'number'},
+        {id: '3', label: 'Bubble Rate', type: 'number'}
+         ],
       rows: [{c:[{v: 0},{v: 0},{v: 0} ]},
      ],
     },
@@ -72,8 +70,8 @@ public bubbleChart: GoogleChartInterface = {
         explorer: { axis: 'horizontal',
             keepInBounds: true },
         hAxis: {
-            title: 'Date',
-            gridlines: {
+            title: 'total count',
+            /*gridlines: {
                 count: -1,
                 units: {
                     days: {format: ['MMM dd']},
@@ -85,7 +83,7 @@ public bubbleChart: GoogleChartInterface = {
                     hours: {format: ['hh:mm:ss a', 'ha']},
                     minutes: {format: ['HH:mm a Z', ':mm']}
                 }
-            },
+            },*/
         },
         vAxis: { title: this.vAxisTitle},
         backgroundColor: '#F3F3F3',
@@ -108,19 +106,20 @@ ngOnInit() {
         if (i > 0) {
             this.series[i - 1] = {};
         };
-        this.item = this.fb.data;
-        this.item.subscribe(res => {
-          if (res !== undefined) {
-            this.bblTotal = +res.bblttl;
-            this.bblCurrent = +res.bblrate;
+ //     this.item = this.fb.Bdata;
+ //       this.item.subscribe(res => {
+ //         if (res !== undefined) {
+ //           this.bblTotal = +res.bubbles;
+ //           this.bblCurrent = +res.bpm;
           //  this.loading = false;
-          }
-        });
+     }
+  }
+  
 
-    console.log('ddata',this.bblTotal)
+ //   console.log('ddata',this.bblTotal)
     
     // this.averagebblrate();
-}}
+
 
 public click (event: ChartSelectEvent) {
     const ccbubbleChart = this.bubbleChart.component;
@@ -164,20 +163,20 @@ public click (event: ChartSelectEvent) {
 // }
 
 public updateChart () {
-    console.log('data check',this.data);
-    if (this.data.rows.length > 1){
-        console.log('data length',this.data.rows.length);
-        this.bubbleChart.dataTable = this.data;
+    console.log('data check',this.Bdata);
+    if (this.Bdata.rows.length > 1){
+        console.log('data length',this.Bdata.rows.length);
+        this.bubbleChart.dataTable = this.Bdata;
         // console.log('test value', this.data.rows[1].c[1]);
         var targetvalue = 0.00;
-    for (let i = 0; i < this.data.rows.length; i++) {
+    for (let i = 0; i < this.Bdata.rows.length; i++) {
     //  console.log(this.data.rows.length);
-     targetvalue =  targetvalue + parseFloat(this.data.rows[i].c[1].v);
+     targetvalue =  targetvalue + parseFloat(this.Bdata.rows[i].c[1].v);
     // console.log('data', targetvalue)
     };
 
     //  console.log('total',targetvalue);
-     this.avg =  (targetvalue / this.data.rows.length);
+     this.avg =  (targetvalue / this.Bdata.rows.length);
     //  console.log('avg',this.avg)
     this.historyStats () ;
     }
@@ -202,7 +201,7 @@ public updateChart () {
         }
     }*/
     historyStats () {
-        if (this.data.rows.length > 1){
+        /*if (this.data.rows.length > 1){
             const hData = [];
             var targetvalue = 0.00;
 //            var avgvalue = 0.00;
@@ -257,8 +256,8 @@ public updateChart () {
                         this.offper = 0
                 };
 
-        /*     this.coolper = this.cooling / (this.data.rows.length ) * 100
-            this.offper = this.off / (this.data.rows.length ) * 100 */
+             this.coolper = this.cooling / (this.data.rows.length ) * 100
+            this.offper = this.off / (this.data.rows.length ) * 100 
             
             //       this.beeravg =  (targetvalue / this.data.rows.length);
        //       console.log('avg',this.beeravg);
@@ -270,7 +269,7 @@ public updateChart () {
              targetvalue = 0.00;
          //    const hData2 = [];
      
-  /*           for (let i = 0; i < this.data.rows.length; i++) {
+             for (let i = 0; i < this.data.rows.length; i++) {
             //  console.log(this.data.rows.length);
              targetvalue =  parseFloat(this.data.rows[i].c[2].v);
              hData2.push(targetvalue);
@@ -283,21 +282,21 @@ public updateChart () {
              this.fridgestd = math.std(hData2);
              this.fridgecontrol = this.fridgestd * 2;
     
-    //          console.log('avg',this.fridgeavg)*/
+    //          console.log('avg',this.fridgeavg)
             
-        }
+        }*/
     }
     
-@HostListener('window:resize', ['$event'])
+ @HostListener('window:resize', ['$event'])
     onWindowResize(event: any) {
     // console.log(event.target.innerWidth);
     // Make sure you don't call redraw() in ngOnInit()
     //   - chart would not be initialised by that time, and
     //   - this would cause chart being drawn twice
     this.chart.draw();
-}
+  }
 
-public readyOneTime(event: ChartReadyEvent) {
+ public readyOneTime(event: ChartReadyEvent) {
     if (this.tempFormat === 'C') {
         this.vAxisTitle = 'Bubble Count (BPM)';
         this.chart.wrapper.setOption('vAxis.title','Bubble Count (BPM)');
@@ -306,6 +305,6 @@ public readyOneTime(event: ChartReadyEvent) {
         this.chart.wrapper.setOption('vAxis.title','Bubble Count (BPM)');
     }
      this.chart.draw();
-}
+ }
 
 }
