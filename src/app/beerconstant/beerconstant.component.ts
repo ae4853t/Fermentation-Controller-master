@@ -13,6 +13,7 @@ export class BeerConstantComponent implements OnInit {
   @Input() item: Observable<PhotonData>;
   @Output() changeTemp = new EventEmitter();
   temperature: string;
+//  fridgeTarget: string;
   constructor(public dialog: MatDialog) {}
 
   callParent(arg: string) {

@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\app",
+    "\\src\\app\\history-chart",
+    "\\src\\app\\main",
+    "\\src\\app\\models",
+    "\\src\\app\\profile-dialog",
+    "\\src\\app\\services"
+  ],
+  "SelectedNode": "\\src\\app\\profile-dialog\\profile-dialog.component.ts",
+  "PreviewInSolutionExplorer": false
+}

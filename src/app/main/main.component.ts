@@ -52,8 +52,8 @@ onChange(newMode: number) {
   console.log('tab change newmode/currentmode', newMode, this.currentMode);
   if (newMode === this.currentMode) return;  // do nothing if attempting to change to currentMode.
   if (newMode === 0) {
-    this.fbService.deleteList('TemperatureData');
-    console.log('delete history');
+   // this.fbService.deleteList('TemperatureData');
+   // console.log('delete history');
   }
   if (this.currentMode !== 3) {
     if (newMode !== 3) {  // don't call particle function on mode 3 entry as it will be handled by the start of a profile.
@@ -79,9 +79,11 @@ onChange(newMode: number) {
 
       if (arg === '0') {
         this.fbService.deleteList('TemperatureData');
-        console.log('delete history');
+        console.log('delete temp history');
+        this.fbService.deleteList('bubble');
+        console.log('delete bubble history');
       }
-      console.log('tabchange test curretn tab', this.currentMode);
+      console.log('tabchange test current tab', this.currentMode);
       if (arg === '3') {   // if the newMode is profile do not call the particle function.  This will be handled in the profile component.
         return;
       }

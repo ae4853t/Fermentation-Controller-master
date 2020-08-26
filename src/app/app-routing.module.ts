@@ -3,12 +3,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { MainComponent } from './main/main.component';
 import { SetupComponent } from './setup/setup.component';
 import { HistoryChartComponent } from './history-chart/history-chart.component';
+import { BubbleChartComponent } from './bubble-chart/bubble-chart.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/main', pathMatch: 'full' },
   { path: 'main',  component: MainComponent },
   { path: 'setup',  component: SetupComponent },
   { path: 'app-history-chart',  component: HistoryChartComponent },
+  { path: 'app-bubble-chart',  component: BubbleChartComponent }
 ];
 
 @NgModule({

@@ -3,3 +3,27 @@
     <mat-spinner></mat-spinner>
   </div>
 <google-chart #logChart *ngIf = "!loading" [data]="historyChart" (chartReadyOneTime)='readyOneTime($event)'(chartSelect)='click($event)'></google-chart>
+
+<div fxLayout ="column"  fxLayoutAlign ="start stretch">
+ 
+<div fxLayout='row' fxLayoutAlign="start start" >
+    <mat-card class='temperaturecard' fxFlex="grow">
+      <mat-card-header>
+        <i class="fa fa-thermometer-half fa-2x"></i>&nbsp;&nbsp;Fermentation Performance:</mat-card-header>
+      <mat-card-content align="center">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Avg Beer Temp: {{ beeravg.toFixed(2) }}
+          <br> Std Dev Beer Temp:&nbsp;&nbsp; {{ beerstd.toFixed(2) }}
+          <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Control Range:&nbsp;&nbsp; {{ beercontrol.toFixed(2) }}
+      </mat-card-content>
+    </mat-card>
+    <mat-card class='temperaturecard' fxFlex="grow">
+      <mat-card-header>
+        <i class="fa fa-thermometer-half fa-2x"></i>&nbsp;&nbsp;Process Control Stats:</mat-card-header>      <mat-card-content align="center" >
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Avg Fridge Temp: {{ fridgeavg.toFixed(2) }}
+        <br> Std Dev Fridge Temp:&nbsp;&nbsp; {{ fridgestd.toFixed(2) }}
+        <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Control Range:&nbsp;&nbsp; {{ fridgecontrol.toFixed(2) }}
+      </mat-card-content>
+    </mat-card>
+  </div>
+  
+</div>

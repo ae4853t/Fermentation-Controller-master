@@ -6,6 +6,7 @@ import { GoogleChartInterface } from 'ng2-google-charts/google-charts-interfaces
 import { ChartSelectEvent } from 'ng2-google-charts';
 import {GoogleChartComponent} from 'ng2-google-charts';
 import { ChartReadyEvent } from 'ng2-google-charts';
+import * as math from 'mathjs';
 
 @Component({
   selector: 'app-history-chart',
@@ -17,6 +18,12 @@ export class HistoryChartComponent implements OnInit, OnChanges {
     tempFormat = localStorage.getItem('tempFormat');
     loading = true;
     data: any;
+    beeravg: number;
+    beerstd: number;
+    beercontrol: number;
+    fridgeavg: number;
+    fridgestd: number;
+    fridgecontrol: number;
     columns = [];
     series = {};
     vAxisTitle = 'temp';
@@ -120,6 +127,54 @@ public updateChart () {
     if (this.data.rows.length > 1){
         console.log('data length',this.data.rows.length);
         this.historyChart.dataTable = this.data;
+        this.historyStats();      
+    }
+
+}
+historyStats () {
+    if (this.data.rows.length > 1){
+        const hData = [];
+        var targetvalue = 0.00;
+        var coolcount = 0;
+        var heatcount = 0;
+        var offcount = 0;
+    //    var avgvalue = 0.00;
+        for (let i = 0; i < this.data.rows.length; i++) {
+        //  console.log(this.data.rows.length);
+        // if (this.data.rows)
+
+        //}
+         targetvalue =  parseFloat(this.data.rows[i].c[1].v);
+            hData.push(targetvalue)
+//            avgvalue = avgvalue + parseFloat(this.data.rows[i].c[1].v);
+         //  console.log('hdata', targetvalue)
+        };
+        console.log('hdata', targetvalue)
+        //  console.log('total',targetvalue);
+  //       this.beeravg =  (targetvalue / this.data.rows.length);
+   //       console.log('avg',this.beeravg);
+         this.beeravg = math.mean(hData);
+         this.beerstd = math.std(hData);
+         this.beercontrol = this.beerstd * 2;
+   //      console.log('bavg',this.hData);
+         targetvalue = 0.00;
+         const hData2 = [];
+ 
+         for (let i = 0; i < this.data.rows.length; i++) {
+        //  console.log(this.data.rows.length);
+         targetvalue =  parseFloat(this.data.rows[i].c[2].v);
+         hData2.push(targetvalue);
+         
+         //  console.log('data', targetvalue)
+        };
+    
+        //  console.log('total',targetvalue);
+         this.fridgeavg =  math.mean(hData2);
+         this.fridgestd = math.std(hData2);
+         this.fridgecontrol = this.fridgestd * 2;
+
+//          console.log('avg',this.fridgeavg)
+        
     }
 }
 

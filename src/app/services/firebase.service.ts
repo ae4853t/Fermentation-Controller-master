@@ -123,7 +123,7 @@ export class FirebaseService {
 
     get chart() {
         // last 1008 is to limit to 7 days of history each sample is 10 minutes.  If the list is too long performance is very bad.
-        return this.af.list<PhotonData>('/TemperatureData', ref => ref.limitToLast(300)).snapshotChanges().pipe(map(changes => {
+        return this.af.list<PhotonData>('/TemperatureData', ref => ref.limitToLast(1008)).snapshotChanges().pipe(map(changes => {
             const rows = changes.map(ch => {
               //  console.log('chart data', ch.payload.val());
                 let mode = ch.payload.val().currentState;
@@ -147,10 +147,11 @@ export class FirebaseService {
                     return temp;
                 } else {
                     const temp = {
-                        c: [{ v: new Date(ch.payload.val().ts) },
-                        { v: +((parseFloat(ch.payload.val().beerTemp) * 1.8 + 32).toFixed(2)) },
-                        { v: +((parseFloat(ch.payload.val().chamberTemp) * 1.8 + 32).toFixed(2)) },
-                        { v: this.customToolTip(toolTipDate, (parseFloat(ch.payload.val().chamberTemp) * 1.8 + 32).toFixed(2), mode) }
+                        c: [
+                            { v: new Date(ch.payload.val().ts) },
+                            { v: +((parseFloat(ch.payload.val().beerTemp) * 1.8 + 32).toFixed(2)) },
+                            { v: +((parseFloat(ch.payload.val().chamberTemp) * 1.8 + 32).toFixed(2)) },
+                            { v: this.customToolTip(toolTipDate, (parseFloat(ch.payload.val().chamberTemp) * 1.8 + 32).toFixed(2), mode) }
                         ]
                     };
                     return temp;
@@ -167,11 +168,106 @@ export class FirebaseService {
             };
         }));
     }
+    get bblttl(){
+        /**
+         * arr bRows[]        */
+        const  bRows = []; 
+        return this.af.list<PhotonData>('/bubble', ref => ref.limitToLast(1000)).snapshotChanges().pipe(map(changes => {
+            const bRows = changes.map(ch => {
+                const bbl = [ parseFloat(ch.payload.val().bubbles).toFixed(2) ]
+                 })
+        }));
+      //  console.log('bbl',bRows[1])
+    }
+
+    get bblratedata(){
+        /**
+         * arr bRows[]        */
+        const  bRows = []; 
+       /* originally was:
+        return this.af.list<PhotonData>('/TemperatureData', ref => ref.limitToLast(1000)).snapshotChanges().pipe(map(changes => {
+            const bRows = changes.map(ch => {
+                const bbl = [ parseFloat(ch.payload.val().bpm).toFixed(2) ]
+                 })*/
+
+        return this.af.list<PhotonData>('/bubble', ref => ref.limitToLast(1000)).snapshotChanges().pipe(map(changes => {
+            const bRows = changes.map(ch => {
+                const bbl = [ parseFloat(ch.payload.val().bpm).toFixed(2) ]
+                 })
+        }));
+        console.log('bbl',bRows[1])
+    }
+
+
+    get chartbbl() {
+
+        // last 1008 is to limit to 7 days of history each sample is 10 minutes.  If the list is too long performance is very bad.
+        // 8-24-2020 changed from TemperatureData to bubble:
+        return this.af.list<PhotonData>('/TemperatureData', ref => ref.limitToLast(1008)).snapshotChanges().pipe(map(changes => {
+            const rows = changes.map(ch => {
+              //  console.log('chart data', ch.payload.val());
+              
+                let mode = ch.payload.val().currentState;
+                if (mode === '0') mode = 'Off';
+                if (mode === '1') mode = 'Cool';
+                if (mode === '2') mode = 'Heat';
+                
+              
+                const options = {
+                    month: 'short',
+                    day: 'numeric', hour: '2-digit', minute: '2-digit' 
+                }; 
+                const toolTipDate = new Date(ch.payload.val().ts).toLocaleDateString('en-US', options);
+                if (this.tempFormat === 'C') {
+                    const temp = {
+                        c: [
+                            { v: new Date(ch.payload.val().ts) },
+                            { v: parseFloat(ch.payload.val().bpm).toFixed(2) },
+                            { v: parseFloat(ch.payload.val().currentState).toFixed(0)},
+                            { v: this.customToolTipbbl(toolTipDate, parseFloat(ch.payload.val().bpm).toFixed(2), mode) }
+                        ]
+                    };
+                    return temp;
+                } else {
+                    const temp = {
+                        c: [
+                            { v: new Date(ch.payload.val().ts) },
+                            { v: parseFloat(ch.payload.val().bpm).toFixed(2) },
+                            { v: parseFloat(ch.payload.val().currentState).toFixed(0)},
+                            { v: this.customToolTipbbl(toolTipDate, (parseFloat(ch.payload.val().bpm) * 1).toFixed(2), mode) }
+                        ]
+                    };
+                    return temp;
+                    }
+            });
+            return {
+                cols: [
+                    { id: '1', label: 'Date', type: 'date' },
+                    { id: '2', label: 'Bubble Rate', type: 'number' },
+                    {id: '3', label: 'Mode',type:'number' },
+                    { id: '4', label: 'Tooltip', type: 'string', role: 'tooltip', p: { 'html': true } }
+                ],
+                rows: rows
+            };
+        }));
+    }
+
     customToolTip(dates, temp, mode) {
         return '<div style="padding:5px 5px 5px 5px;">'
             + dates
             + '<br>'
             + 'Chamber: '
+            + temp
+            + '<br>'
+            + 'State: '
+            + mode
+            + '</div>';
+    }
+    customToolTipbbl(dates, temp, mode) {
+        return '<div style="padding:5px 5px 5px 5px;">'
+            + dates
+            + '<br>'
+            + 'Bubble Rate: '
             + temp
             + '<br>'
             + 'State: '
@@ -186,8 +282,10 @@ export class FirebaseService {
             }
             ));
     }
-
-
+    
+    get currentData() {
+        return this._photonData.asObservable();
+    }
     get data() {
         return this._photonData.asObservable();
     }
@@ -237,19 +335,21 @@ export class FirebaseService {
         }
 
         const beerTemp = parseFloat(this.dataStore.photonData.beerTemp);
-        const fridgeTemp = parseFloat(this.dataStore.photonData.fridgeTemp);
-        const fridgeTarget = parseFloat(this.dataStore.photonData.fridgeTarget);
+        const fridgeTemp = parseFloat(this.dataStore.photonData.chamberTemp);
+        const chamberTarget = parseFloat(this.dataStore.photonData.chamberTarget);
         const targetTemp = parseFloat(this.dataStore.photonData.targetTemp);
+        const ttlbubble = parseInt(this.dataStore.photonData.bblttl);
+        const bblrate = parseFloat(this.dataStore.photonData.bblrate);
         const tempFormat = localStorage.getItem('tempFormat');
         if (tempFormat === 'C') {
             this.dataStore.photonData.beerTemp = (beerTemp.toFixed(1).toString() + ' \xB0C');
             this.dataStore.photonData.fridgeTemp = (fridgeTemp.toFixed(1).toString() + ' \xB0C');
-            this.dataStore.photonData.fridgeTarget = (fridgeTarget.toFixed(1).toString() + ' \xB0C');
+            this.dataStore.photonData.chamberTarget = (chamberTarget.toFixed(1).toString() + ' \xB0C');
             this.dataStore.photonData.targetTemp = (targetTemp.toFixed(1).toString() + ' \xB0C');
         } else {
             this.dataStore.photonData.beerTemp = (((beerTemp * 1.8 + 32).toFixed(1)).toString() + ' \xB0F');
             this.dataStore.photonData.fridgeTemp = (((fridgeTemp * 1.8 + 32).toFixed(1)).toString() + ' \xB0F');
-            this.dataStore.photonData.fridgeTarget = (((fridgeTarget * 1.8 + 32).toFixed(1)).toString() + ' \xB0F');
+            this.dataStore.photonData.chamberTarget = (((chamberTarget * 1.8 + 32).toFixed(1)).toString() + ' \xB0F');
             this.dataStore.photonData.targetTemp = (((targetTemp * 1.8 + 32).toFixed(1)).toString() + ' \xB0F');
         }
     }

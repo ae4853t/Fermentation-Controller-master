@@ -20,7 +20,6 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MaterialModule } from './material.module';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AngularFireModule } from '@angular/fire';
@@ -44,6 +43,7 @@ import { BeerProfileComponent } from './beer-profile/beer-profile.component';
 import { ProfileChartComponent } from './profile-chart/profile-chart.component';
 import { ProfileDialogComponent } from './profile-dialog/profile-dialog.component';
 import { HistoryChartComponent } from './history-chart/history-chart.component';
+import { BubbleChartComponent } from './bubble-chart/bubble-chart.component';
 import { TabChangeDialogComponent } from './tab-change-dialog/tab-change-dialog.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { PidHelpDialogComponent } from './pid-help-dialog/pid-help-dialog.component';
@@ -64,6 +64,7 @@ import { fireBaseConfig } from '../environments/firebase.config';
     ProfileChartComponent,
     ProfileDialogComponent,
     HistoryChartComponent,
+    BubbleChartComponent,
     TabChangeDialogComponent,
     PidHelpDialogComponent,
 
@@ -94,12 +95,8 @@ import { fireBaseConfig } from '../environments/firebase.config';
     MatTableModule,
     MatProgressSpinnerModule,
     MatExpansionModule,
-    MatTooltipModule,
-    MatIconModule,
-    MaterialModule
-
+    MatTooltipModule
   ],
-
 
   providers: [
     FirebaseService,

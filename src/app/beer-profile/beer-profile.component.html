@@ -83,12 +83,19 @@
 </div>
 
 <div *ngIf="profileRunning" fxLayout="row" fxLayoutAlign="start start">
-<mat-card class='temperaturecard' fxFlex="grow">
-  <mat-card-content align="center">
-    Running Profile: {{ (item | async)?.profileName }}
-  </mat-card-content>
-</mat-card>
-</div>
+
+  <mat-card class='temperaturecard' fxFlex="grow">
+    <mat-card-content *ngIf="currcool" align="center" style="background-Color: rgb(0, 153, 255)">
+      Running Profile: {{ (item | async)?.profileName }}
+    </mat-card-content>
+    <mat-card-content *ngIf="currheat" align="center" style="background-Color: red">
+      Running Profile: {{ (item | async)?.profileName }}
+    </mat-card-content>
+    <mat-card-content *ngIf="curridle" align="center" style="background-Color: rgb(129, 129, 138)">
+      Running Profile: {{ (item | async)?.profileName }}
+    </mat-card-content>
+  </mat-card>
+  </div>
 <app-profile-chart class='googleChart' [currentProfile]="currentProfile"></app-profile-chart>
 
 
@@ -127,13 +134,24 @@
           <br>&nbsp;&nbsp;Target</mat-card-header>
         <mat-card-content align="center">
           <div style='height:2px'></div>
-          <h2>{{ ((item | async)?.fridgeTarget ) }}</h2>
+          <h2>{{ ((item | async)?.chamberTarget ) }}</h2>
         </mat-card-content>
 
       </mat-card>
     </div>
     <mat-card class='temperaturecard' fxFlex="auto">
-      <mat-card-header>
+      
+      <mat-card-header *ngIf="currheat" style= "background-Color: red">
+        <i class="fa fa-clock-o fa-2x"></i>
+        &nbsp;&nbsp;Current State: {{ ((item | async)?.currentState) }}
+        <br>&nbsp;&nbsp;For: {{ ((item | async)?.stateTime ) }}
+      </mat-card-header>
+      <mat-card-header *ngIf="currcool" style= "background-Color: rgb(0, 153, 255)">
+        <i class="fa fa-clock-o fa-2x"></i>
+        &nbsp;&nbsp;Current State: {{ ((item | async)?.currentState) }}
+        <br>&nbsp;&nbsp;For: {{ ((item | async)?.stateTime ) }}
+      </mat-card-header>
+      <mat-card-header *ngIf="curridle" style= "background-Color:  rgb(129, 129, 138)">
         <i class="fa fa-clock-o fa-2x"></i>
         &nbsp;&nbsp;Current State: {{ ((item | async)?.currentState) }}
         <br>&nbsp;&nbsp;For: {{ ((item | async)?.stateTime ) }}

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {DataSource} from '@angular/cdk/collections';
 import {Observable} from 'rxjs';
@@ -16,28 +16,38 @@ import {Row} from '../models/row';
   styleUrls: ['./beer-profile.component.scss']
 })
 
-export class BeerProfileComponent implements OnInit  {
+export class BeerProfileComponent implements OnInit, OnChanges {
   @Input() item: any;
   public row: Row;
+  public currState = '0';
+  public curridle = false;
+  public currcool = false;
+  public currheat = false;
   public profilelist = [];
   public currentProfile = 'null';
   public profileRunning = false;
   displayedColumns = ['day', 'temperature', 'edit', 'delete'];
   dataSource: ChartDataSource | null;
   constructor(private fb: FirebaseService, private particleService: ParticleService, private mdDialog: MatDialog) {
-}
+  }
+
 
 ngOnInit() {
   this.fb.profileList.subscribe(res => this.profilelist = res);
-  this.item.pipe(first()).subscribe(res => {
+   this.item.pipe(first()).subscribe(res => {
     this.currentProfile = res.profileName;
   });
   this.item.subscribe(res => {
     if (res.mode === '3') this.profileRunning = true;
     else this.profileRunning = false;
   });
+this.getColor();
+// console.log('fridgeTarget',(this.))
 }
-
+ngOnChanges() {
+  this.getColor();
+  // console.log('profile changessss');
+}
 // the particle function expects a sting of format {profileName,0,66,3,70,4,65,} the numbers are day temperature 
 // pairs.  the trailing comma is required.
 startProfile() {
@@ -109,12 +119,39 @@ openDialogAdd() {
 deleteRow(row: Row) {
   this.fb.deleteRow(this.currentProfile, row.key);
 }
-
 deleteProfile() {
   this.fb.deleteList('Profile/' + this.currentProfile);
   this.profileChange('null');
 }
+getColor() {
+  // return this.fb..data.currentStatus === 'Idle' ? 'primary' : 'green';
+  // return this.item.currentState === 'Idle' ? 'primary': 'green';
+ 
+  this.item.subscribe(res => {
+    if (res.currentState === 'Idle') {this.currState = 'primary';
+    this.currcool = false;
+    this.currheat = false;
+    this.curridle = true;
+  }
+    else if (res.currentState === 'Cool') {
+      this.currState = 'blue';
+      this.currcool = true;
+      this.currheat = false;
+      this.curridle = false;
+        
+    }
+    else {this.currState = 'red';
+    this.currcool = false;
+    this.currheat = true;
+    this.curridle = false;
 
+  }
+  });
+  return this.currState;
+  return this.currcool;
+  return this.currheat;
+  return this.curridle;
+}
 }
 
 

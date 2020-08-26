@@ -5,8 +5,10 @@
         <mat-icon>menu</mat-icon>
       </button>
       <div fxFlex="1 1 auto"></div>
-      <span><i class="fa fa-beer"></i> Fermentation Controller</span>
-  </mat-toolbar>
+      <!-- <span><i style="height: max-content;" class="fa fa-beer"></i> Dougie Fresh Fermentations!</span> -->
+      <img src="assets/img/logo.png">
+          <span><i style="height: max-content;" class="fa fa-beer"></i> Dougie Fresh Fermentations!</span>
+    </mat-toolbar>    
 
   <mat-sidenav-container #sidenav style="height:100%;width:100%;">  <!--style="height:100%;width:100%;"-->
       <mat-sidenav #sidenav mode="push" opened="false" style="min-width:220px;">
@@ -25,7 +27,11 @@
           </button>
           <button mat-button routerLink="/app-history-chart" (click)="sidenav.toggle()">
             <mat-icon>show_chart</mat-icon>
-            <span>Chart</span>
+            <span>Fermentation Chart</span>
+          </button>
+          <button mat-button routerLink="/app-bubble-chart" (click)="sidenav.toggle()">
+            <mat-icon>show_chart</mat-icon>
+            <span>Bubble rate chart</span>
           </button>
           <button mat-button (click)="sidenav.toggle()">
             <mat-icon>cancel</mat-icon>
@@ -33,10 +39,13 @@
           </button>
         </div>
       </mat-sidenav>
-
-
+  
+      
       <div class ='details-container'>
         <router-outlet ></router-outlet>
-      </div>
-
+      </div> 
+      
     </mat-sidenav-container>
+  
+
+  
